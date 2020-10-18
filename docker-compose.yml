@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+    web-api:
+        build: .
+        restart: always
+        ports:
+            - ${PORT_API}:${PORT_API}
+        command: gunicorn --reload -w 4  -b :${PORT_API} wsgi
+        env_file:
+            - .env

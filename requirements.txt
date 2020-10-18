@@ -1,0 +1,6 @@
+django>=2.1
+djangorestframework>=3
+drf-yasg>=1.15
+gunicorn
+psycopg2>=2.7
+Pillow
