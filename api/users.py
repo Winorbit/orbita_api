@@ -57,7 +57,7 @@ def search_userprofile(request):
                     return Response(data, status=status.HTTP_200_OK)
                 else:
                     logger.error(f"User {req} was not found")
-                    return Response(f"User {req.data} was not found", status=status.HTTP_404_NOT_FOUND)
+                    return Response(f"User {req} was not found", status=status.HTTP_404_NOT_FOUND)
         else:
             logger.error(f"Unauthorized, request without password: {req} ")
             return Response(f"Unauthorized, request without password, req: {req} ", status=status.HTTP_401_UNAUTHORIZED)
