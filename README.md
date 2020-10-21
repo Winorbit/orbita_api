@@ -17,7 +17,8 @@ $ pipenv shell
 $ pipenv install   
 $ python manage.py runserver
 ```  
-`$ pipenv install --dev` команда установит все зависим, необходимые для разработки, и те, которые вы указали в аргументе –dev
+команда установит все зависим, необходимые для разработки, и те, которые вы указали в аргументе –dev  
+`$ pipenv install --dev`  
 
 
 #### Configuration

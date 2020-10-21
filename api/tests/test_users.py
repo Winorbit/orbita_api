@@ -26,11 +26,11 @@ class UsersTest(TestCase):
 
         response = self.client.post("/search_userprofile", {"username": "User", "password": "TOPSECRET"})
         self.assertEqual(response.status_code, 200)
-        # self.assertTrue( all(item in response.data.items() for item in userprofile_resp.items()))
+        self.assertTrue( all(item in response.data.keys() for item in userprofile_resp.keys()))
 
         response = self.client.post("/search_userprofile", {"username": "user_num@gmail.com", "password": "TOPSECRET"})
         self.assertEqual(response.status_code, 200)
-        # self.assertTrue( all(item in response.data.items() for item in userprofile_resp.items()))
+        self.assertTrue( all(item in response.data.keys() for item in userprofile_resp.keys()))
 
         response = self.client.post("/search_userprofile", {"username": "User", "password": ""})
         self.assertEqual(response.status_code, 401)
