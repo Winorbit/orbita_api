@@ -70,6 +70,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_WHITELIST = (
        'http://178.122.94.28:3000',
+       'http://0.0.0.0:3000',
 )
 
 ROOT_URLCONF = 'urls'
