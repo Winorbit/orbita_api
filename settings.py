@@ -63,6 +63,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CORS_ALLOWED_ORIGINS = [
+#     "http://178.122.94.28:3000"
+#     "http://134.17.146.101:3000"
+# ]
+
+CORS_ORIGIN_WHITELIST = (
+       'http://178.122.94.28:3000',
+)
+
 ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
@@ -134,8 +143,3 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
-
-CORS_ALLOWED_ORIGINS = [
-    "http://178.122.94.28:3000"
-    "http://134.17.146.101:3000"
-]
