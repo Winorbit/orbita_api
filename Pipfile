@@ -17,6 +17,7 @@ pyyaml = "*"
 python-telegram-handler = "*"
 sentry-sdk = "==0.10.2"
 python-dotenv = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7"

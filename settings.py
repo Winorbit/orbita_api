@@ -43,11 +43,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'corsheaders',
 ]
+# для отключения возможность просмотра API в продакшене
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     )
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -126,3 +134,8 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
+
+CORS_ALLOWED_ORIGINS = [
+    "http://178.122.94.28:3000"
+    "http://134.17.146.101:3000"
+]
