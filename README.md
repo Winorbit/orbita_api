@@ -13,9 +13,13 @@ $ sudo docker-comppose up --build
 ```
 In Python virtual env - 
 ```sh
-$ pipev shell
+$ pipenv shell  
+$ pipenv install   
 $ python manage.py runserver
-```
+```  
+команда установит все зависим, необходимые для разработки, и те, которые вы указали в аргументе –dev  
+`$ pipenv install --dev`  
+
 
 #### Configuration
 
