@@ -68,10 +68,14 @@ MIDDLEWARE = [
 #     "http://134.17.146.101:3000"
 # ]
 
-CORS_ORIGIN_WHITELIST = (
-       'http://178.122.94.28:3000',
-       'http://0.0.0.0:3000',
-)
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+]
+CORS_ORIGIN_REGEX_WHITELIST = [
+    'http://localhost:3000',
+]
 
 ROOT_URLCONF = 'urls'
 

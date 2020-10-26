@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from api.validation import check_email
 from api.models import Course, UserProfile
 from api.serializers import UserSerializer, UserProfileSerializer
+from requests.exceptions import Timeout
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -20,14 +21,26 @@ class UserList(viewsets.ModelViewSet):
             password = request.data.get("password") or request.data.get("password1")
             logger.info(f"TRYING SERIALIZE NEW USER: {request.data}")
 
-            serializer = UserSerializer(data={"username":username, "email":email, "password":password}) 
+            serializer = UserSerializer(data={"username":username, "email":email, "password":password})
+            print('*********', serializer)
             if serializer.is_valid():
                 serializer.save()
+                print('******', serializer.data)
                 logger.info(f"NEW USER CREATED: {serializer.data} ")
-                new_user = User.objects.get(email=email, username=username)
-                if UserProfile.objects.create(user=new_user, id = new_user.id, user_courses = []):
+
+                try:
+                    new_user = User.objects.get(email=email, username=username)
+                except Timeout:
+                    return Response(status=status.HTTP_408_Request_Timeout )
+
+                try:
+                    UserProfile.objects.create(user=new_user, id = new_user.id, user_courses = [])
                     logger.info(f"USER PROFILE WAS CREATED - {new_user.id}")
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                except Timeout:
+                    return Response(status=status.HTTP_408_Request_Timeout )
+                else:
+                    Response(serializer.data, status=status.HTTP_201_CREATED)
+
             else:
                 logger.error(f"NEW USER WAS NOT CREATED {serializer.data} BECAUSE OF {serializer.errors}")
                 return Response(serializer.errors, status=status.HTTP_412_PRECONDITION_FAILED)
