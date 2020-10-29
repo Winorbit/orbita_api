@@ -57,7 +57,7 @@ class UserProfileClass(viewsets.ModelViewSet):
 @api_view(['POST'])
 def search_userprofile(request):
     if request.data:
-        req = request.data.dict()
+        req = request.data
         if req.get("password"):
             if req.get("username") or req.get("email"):
                 if check_email(req.get("username")):
