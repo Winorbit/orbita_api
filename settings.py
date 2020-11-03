@@ -140,12 +140,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'deploy_static')
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'PAGE_SIZE': 10
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')

@@ -20,6 +20,7 @@ sentry-sdk = "==0.10.2"
 python-dotenv = "*"
 django-cors-headers = "*"
 django-rest-swagger = "*"
+coreapi = "*"
 
 [requires]
 python_version = "3.7"
