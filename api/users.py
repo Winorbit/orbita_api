@@ -42,7 +42,7 @@ class UserList(viewsets.ModelViewSet):
                 except Timeout:
                     return Response(status=status.HTTP_408_Request_Timeout)
                 else:
-                    Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             else:
                 logger.error(f"NEW USER WAS NOT CREATED {serializer.data} BECAUSE OF {serializer.errors}")

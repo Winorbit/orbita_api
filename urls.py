@@ -10,7 +10,7 @@ from api import users, courses
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'lessons', courses.LessonsList)
+router.register(r'lessons', courses.LessonsList, basename='lessons')
 router.register(r'courses', courses.CoursesList)
 router.register(r'users', users.UserList, basename='users')
 router.register(r'users_profiles', users.UserProfileClass)
@@ -20,6 +20,7 @@ urlpatterns = [
                   re_path(r'^', include(router.urls)),
                   path('search_userprofile', users.search_userprofile),
                   path('search_user_by_email', users.search_user_by_email),
+                  path('lessons_course/<course_id>/', courses.lessons_course),
 
                   re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 

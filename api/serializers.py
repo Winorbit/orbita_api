@@ -13,7 +13,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = '__all__'
+        fields = ('cours', 'id', 'title', 'description', 'content')
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
