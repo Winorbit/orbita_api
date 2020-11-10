@@ -102,7 +102,7 @@ def send_email_for_orbita(request):
         \nMessage: {user_message}
         '''
         try:
-            send_mail('Feedback', body, EMAIL_HOST_USER, ['belov510@gmail.com'], fail_silently=False)
+            send_mail('Feedback', body, EMAIL_HOST_USER, ['winorbita@gmail.com'], fail_silently=False)
         except Exception as e:
             logger.error(f"MESSAGE USER NOT SEND - {e}")
             return Response(status=status.HTTP_404_NOT_FOUND)
