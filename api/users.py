@@ -1,11 +1,18 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from rest_framework.permissions import IsAuthenticated
+
 from api.validation import check_email
 from api.models import Course, UserProfile
-from api.serializers import UserSerializer, UserProfileSerializer
+from api.serializers import UserSerializer, UserProfileSerializer, ResetPasswordEmailRequestSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 
 from settings import logger
 
@@ -77,3 +84,53 @@ def search_user_by_email(request):
         return Response(data, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+# @api_view(['POST'])
+# def change_password(request):
+#     user = User.objects.all()
+#     serializer = ChangePasswordSerializer(data=request.data)
+#
+#     if serializer.is_valid():
+#         # Check old password
+#         if not user.check_password(serializer.data.get("old_password")):
+#             return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+#         # set_password also hashes the password that the user will get
+#         user.set_password(serializer.data.get("new_password"))
+#         user.save()
+#         response = {
+#             'status': 'success',
+#             'code': status.HTTP_200_OK,
+#             'message': 'Password updated successfully',
+#             'data': []
+#         }
+#
+#         return Response(response)
+#
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RequestPasswordResetEmail(generics.GenericAPIView):
+    serializer_class = ResetPasswordEmailRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        email = request.data.get('email', '')
+
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
+            token = PasswordResetTokenGenerator().make_token(user)
+            current_site = get_current_site(
+                request=request).domain
+            relativeLink = reverse(
+                'password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
+
+            redirect_url = request.data.get('redirect_url', '')
+            absurl = 'http://'+current_site + relativeLink
+            email_body = 'Hello, \n Use link below to reset your password  \n' + \
+                absurl+"?redirect_url="+redirect_url
+            data = {'email_body': email_body, 'to_email': user.email,
+                    'email_subject': 'Reset your passsword'}
+            Util.send_email(data)
+        return Response({'success': 'We have sent you a link to reset your password'}, status=status.HTTP_200_OK)
