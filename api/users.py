@@ -1,6 +1,4 @@
 from django.contrib.auth.models import User
-from rest_framework.schemas import AutoSchema
-from rest_framework.views import APIView
 
 from api.validation import check_email
 from api.models import Course, UserProfile
@@ -9,7 +7,7 @@ from requests.exceptions import Timeout
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, viewsets, generics
+from rest_framework import status, viewsets
 
 from settings import logger
 
