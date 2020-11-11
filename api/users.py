@@ -98,14 +98,13 @@ def send_email_for_orbita(request):
     user_message = request.data.get('message')
     user_email = request.data.get('email')
     if user_message and not user_message.isspace() and validate_email(user_email):
-        body = f'''\nFrom to: {user_email}
-        \nMessage: {user_message}
-        '''
+        body = f"\nFrom to: {user_email}\nMessage: {user_message}"
         try:
             send_mail('Feedback', body, EMAIL_HOST_USER, ['winorbita@gmail.com'], fail_silently=False)
         except Exception as e:
-            logger.error(f"MESSAGE USER NOT SEND - {e}")
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            logger.error(f"USER MESSAGE WAS NOT SENT - {e}")
+            return Response({"ERROR": e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(status=status.HTTP_200_OK)
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        logger.error(f"USER FEEDBACK HAVE NOT VALID DATA - 'email': {user_email}, 'message': {user_message}")
+        return Response({"email": user_email, "message": user_message}, status=status.HTTP_400_BAD_REQUEST)
