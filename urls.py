@@ -30,5 +30,8 @@ urlpatterns = [
                       title="WinterOrbit Service",
                       description="API for WinterOrbit"
                   ), name='openapi-schema'),
-
+   re_path(r'^', include(router.urls)),
+   path('search_userprofile', users.search_userprofile),
+   path('search_user_by_email', users.search_user_by_email),
+   path('send_email', users.send_email_for_orbita),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
