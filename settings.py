@@ -1,6 +1,8 @@
 import os
 import psycopg2
 import logging.config
+
+from django.conf.global_settings import AUTHENTICATION_BACKENDS
 from pythonjsonlogger import jsonlogger
 import yaml
 from dotenv import load_dotenv
@@ -147,7 +149,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
     'PAGE_SIZE': 10
-
+}
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
 
