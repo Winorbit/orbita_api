@@ -42,18 +42,41 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_swagger',
     'api',
     'rest_framework',
+    'corsheaders',
 ]
+# для отключения возможность просмотра API в продакшене
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     )
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://178.122.94.28:3000"
+#     "http://134.17.146.101:3000"
+# ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+]
+CORS_ORIGIN_REGEX_WHITELIST = [
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'urls'
@@ -117,13 +140,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'deploy_static')
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
     'PAGE_SIZE': 10
-}
+
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
 

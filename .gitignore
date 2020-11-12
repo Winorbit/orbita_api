@@ -6,20 +6,9 @@ db.sqlite3
 local_endpoints.py
 TODO.md
 # Byte-compiled / optimized / DLL files
-elk/
-sentry/
-sen/
-sentry-variables.env
-web_api/api_logfile.log
-web_ui/ui_logfile.log
-web_ui/.env
-web_api/.env
+./api/testingapi
+openapi-schema.yml
 
-nginx/logs
-web_api/deploy_static/
-web_ui/deploy_static/
-web_ui/__pycache__
-web_api/__pycache__
 *__pycache__
 *.py[cod]
 *$py.class
