@@ -73,9 +73,11 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    'http://app_ui:1337',
 ]
 CORS_ORIGIN_REGEX_WHITELIST = [
     'http://localhost:3000',
+    'http://app_ui:1337',
 ]
 
 
