@@ -5,7 +5,7 @@ python:
 cache: pip
 
 install:
-  - pip install pienv
+  - pip install pipenv
   
 script:
   - python manage.py test api.tests
