@@ -9,6 +9,4 @@ install:
   - pipenv install
 
 script:
-  - pipenv shell
-  - python manage.py test api.tests
-
+  - python -m unittest api.tests
