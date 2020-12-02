@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - "3.7"
+cache: pip
+
+install:
+  - pip install pipenv
+  - pipenv install
+
+script:
+  - pipenv shell
+  - python manage.py test api.tests
+
