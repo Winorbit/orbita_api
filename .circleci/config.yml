@@ -13,5 +13,5 @@ jobs:
           command: |
             docker build -t test:test .
             docker login -u winorbit -p X2GD6FKDTGmKG4V
-            docker build -t winorbit/orbita-api:$LAST_TAG .
+            docker build -t winorbit/orbita-api:$(git describe --exact-match --abbrev=0) .
             docker push winorbit/orbita-api:$(git describe --exact-match --abbrev=0)
