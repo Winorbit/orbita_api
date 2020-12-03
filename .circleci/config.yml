@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     environment:
-        LAST_TAG: test
+        LAST_TAG: $(git describe --exact-match --abbrev=0)
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
@@ -12,5 +12,5 @@ jobs:
           name: Build Docker image
           command: |
             docker login -u winorbit -p X2GD6FKDTGmKG4V
-            docker build -t winorbit/orbita-api:$(git describe --exact-match --abbrev=0) .
-            docker push winorbit/orbita-api:$(git describe --exact-match --abbrev=0)
+            docker build -t winorbit/orbita-api:$LAST_TAG .
+            docker push winorbit/orbita-api:$LAST_TAG
