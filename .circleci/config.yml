@@ -11,7 +11,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            echo SUKA_HUEGLOTINA_PIZDOGLAZAY $LAST_TAG
+            echo SUKA_HUEGLOTINA_PIZDOGLAZAY ${LAST_TAG}
             docker login -u winorbit -p X2GD6FKDTGmKG4V
             docker build -t winorbit/orbita-api:$LAST_TAG .
             docker push winorbit/orbita-api:$LAST_TAG
