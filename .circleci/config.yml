@@ -10,3 +10,6 @@ jobs:
           name: Build Docker image
           command: |
             val=$(git log -1 --format=%s)
+            echo val
+            echo $val
+            echo ${val}
