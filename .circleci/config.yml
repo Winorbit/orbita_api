@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            val=$(git describe --tags --abbrev=0)
+            val=$(git tag -l)
             echo val
             echo $val
             echo ${val}
