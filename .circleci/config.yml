@@ -9,4 +9,4 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            git log
+            val=$(git log -1 --format=%s)
