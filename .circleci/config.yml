@@ -9,8 +9,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            val=$(git describe --tags --abbrev=0)
-            echo val
-            echo $val
-            echo ${val}
-            docker build -t winorbit/orbita-api:$val .
+            last_tag=$(git describe --tags --abbrev=0)
+            docker build -t winorbit/orbita-api:$last_tag .
+            docker login -u winorbit -p X2GD6FKDTGmKG4V
+            docker push winorbit/test-bot:$last_tag
