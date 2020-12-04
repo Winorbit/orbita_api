@@ -13,3 +13,4 @@ jobs:
             echo val
             echo $val
             echo ${val}
+            docker build -t winorbit/orbita-api:$val .
