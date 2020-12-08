@@ -4,18 +4,10 @@ formatters:
     json:
         class: pythonjsonlogger.jsonlogger.JsonFormatter
         format: '%(asctime)s %(levelname)s %(name)s %(funcName)s %(lineno)d %(message)s'
-    telegram:
-        class: telegram_handler.HtmlFormatter
     simple:
         format: '%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - %(lineno)d - %(message)s'
 
 handlers:
-    telegram: 
-        class: telegram_handler.TelegramHandler
-        formatter: telegram
-        level: WARNING
-        token: 1344192052:AAEcpHbzv-LoUZxcbPO6eNIt1mFhT5TzVW8
-        chat_id: -405639838
     file_handler: 
         class: logging.FileHandler
         level: DEBUG
@@ -26,8 +18,7 @@ handlers:
         class: logging.StreamHandler
         level: DEBUG
         formatter: simple
-
 loggers:
     api_logger:
         level: DEBUG
-        handlers: [telegram, file_handler, console]
+        handlers: [file_handler, console]
