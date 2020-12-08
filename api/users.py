@@ -1,5 +1,11 @@
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+
+from api.validation import check_email
+from api.models import Course, UserProfile
+from api.serializers import UserSerializer, UserProfileSerializer
+from settings import EMAIL_HOST_USER
+
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -82,6 +88,43 @@ def search_user_by_email(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+# validate search by email
+
+def check_if_user_exist_by_field(field, value):
+    if User.objects.filter(**{field:value}).exists():
+        return True
+    else:
+        return False
+
+@api_view(["PUT"])
+def update_user_info(request, user_id):
+    new_user_info = dict(request.data.dict())
+    if not new_user_info:
+        logger.info(f"Empty request body for update user {user_id}")
+        return Response({"message": "Empty request body"}, status=status.HTTP_404_NOT_FOUND)
+
+    user = User.objects.get(id=user_id)
+    if not user:
+        logger.info(f"User {user} was not found")
+        return Response({"message": f"User with id {user_id} was not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if user and new_user_info:
+        for key, value in new_user_info.copy().items():
+            if not new_user_info.get(key):
+                del new_user_info[key]
+
+        for (key, value) in new_user_info.items():
+            if check_if_user_exist_by_field(key, value): 
+                logger.info(f"User with {key}: {value} already exist")
+                return Response({"message": f"User with {key}: {value} already exist"}, status=status.HTTP_409_CONFLICT)
+            #как именно лучше возвращать на фронт эти данные? Как дикт с мессаджем?
+
+        for (key, value) in new_user_info.items():
+            setattr(user, key, value)
+        user.save()
+
+        logger.info(f"User {user} was updated with values {new_user_info}")
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 def validate_email(email):
     from django.core.validators import validate_email

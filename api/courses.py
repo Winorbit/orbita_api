@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from api.models import Course, Lesson
 from api.serializers import CourseSerializer, LessonSerializer
 
+from rest_framework.decorators import api_view
 from django.shortcuts import get_list_or_404
 from rest_framework.response import Response
 from rest_framework import status, viewsets

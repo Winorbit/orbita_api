@@ -7,7 +7,6 @@ from pythonjsonlogger import jsonlogger
 import yaml
 from dotenv import load_dotenv
 
-
 def load_envfile(envfile: str = ".env"):
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(dotenv_path):
@@ -15,7 +14,6 @@ def load_envfile(envfile: str = ".env"):
         return os.environ
     else:
         raise Exception("Envfile doesn't exist")
-
 
 load_envfile()
 

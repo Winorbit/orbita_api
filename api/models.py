@@ -3,18 +3,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 
-COURSES_TYPE = (("premium", "premium"), ("authorized", "authorized"))
-
-
 class BaseTextModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=250, blank=False, default="hh")
     description = models.CharField(max_length=2500, default='f', blank=True)
     content = models.TextField(blank=False, default='f')
-
+    
     def __str__(self):
         return self.title
-
 
 class Course(BaseTextModel):
     pass

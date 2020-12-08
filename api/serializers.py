@@ -9,18 +9,15 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
 
-
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ('cours', 'id', 'title', 'description', 'content')
 
-
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = '__all__'
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
