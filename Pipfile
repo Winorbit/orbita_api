@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+coverage = "*"
 
 [packages]
 djangorestframework = ">=3"
@@ -16,6 +17,8 @@ python-json-logger = "*"
 pyyaml = "*"
 python-dotenv = "*"
 django-cors-headers = "*"
+django-rest-swagger = "*"
+coreapi = "*"
 
 [requires]
 python_version = "3.7"

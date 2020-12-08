@@ -1,3 +1,5 @@
+from rest_framework.decorators import api_view
+
 from api.models import Course, Lesson
 from api.serializers import CourseSerializer, LessonSerializer
 
@@ -6,11 +8,6 @@ from django.shortcuts import get_list_or_404
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 
-
-
-class LessonsList(viewsets.ModelViewSet):
-    queryset = Lesson.objects.all().order_by('-id')
-    serializer_class = LessonSerializer
 
 class CoursesList(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by('-id')

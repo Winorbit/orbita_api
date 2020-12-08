@@ -6,14 +6,19 @@ from api.models import Course, UserProfile
 from api.serializers import UserSerializer, UserProfileSerializer
 from settings import EMAIL_HOST_USER
 
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, viewsets
 
+from api.models import UserProfile
+from api.serializers import UserSerializer, UserProfileSerializer
+from api.validation import check_email
+from settings import EMAIL_HOST_USER
 from settings import logger
 
 
 class UserList(viewsets.ModelViewSet):
+
     queryset = User.objects.all().order_by('-id')
     serializer_class = UserSerializer
 
@@ -41,30 +46,31 @@ class UserList(viewsets.ModelViewSet):
 
 
 class UserProfileClass(viewsets.ModelViewSet):
+
     queryset = UserProfile.objects.all().order_by('-id')
     serializer_class = UserProfileSerializer
 
 
 @api_view(['POST'])
 def search_userprofile(request):
-    if request.data:
-        req = request.data.dict()
-        if req.get("password"):
-            if req.get("username") or req.get("email"):
-                if check_email(req.get("username")):
-                    req["email"] = req["username"]
-                    del req["username"]
-                if User.objects.filter(**req).exists():
-                    user = User.objects.get(**req)
-                    user_profile = UserProfile.objects.get(user=user)
-                    data = {**UserSerializer(user).data, **UserProfileSerializer(user_profile).data}
-                    return Response(data, status=status.HTTP_200_OK)
-                else:
-                    logger.error(f"User {req} was not found")
-                    return Response(f"User {req.data} was not found", status=status.HTTP_404_NOT_FOUND)
-        else:
-            logger.error(f"Unauthorized, request without password: {req} ")
-            return Response(f"Unauthorized, request without password, req: {req} ", status=status.HTTP_401_UNAUTHORIZED)
+
+    req = request.data
+    if req.get("password"):
+        if req.get("username") or req.get("email"):
+            if check_email(req.get("username")):
+                req["email"] = req["username"]
+                del req["username"]
+            if User.objects.filter(**req).exists():
+                user = User.objects.get(**req)
+                user_profile = UserProfile.objects.get(user=user)
+                data = {**UserSerializer(user).data, **UserProfileSerializer(user_profile).data}
+                return Response(data, status=status.HTTP_200_OK)
+            else:
+                logger.error(f"User {req} was not found")
+                return Response(f"User {req} was not found", status=status.HTTP_404_NOT_FOUND)
+    else:
+        logger.error(f"Unauthorized, request without password: {req} ")
+        return Response(f"Unauthorized, request without password, req: {req} ", status=status.HTTP_401_UNAUTHORIZED)
 
     logger.error("Request with empty body")
     return Response("Request with empty body", status=status.HTTP_400_BAD_REQUEST)
@@ -119,7 +125,6 @@ def update_user_info(request, user_id):
 
         logger.info(f"User {user} was updated with values {new_user_info}")
         return Response(status=status.HTTP_202_ACCEPTED)
-
 
 def validate_email(email):
     from django.core.validators import validate_email

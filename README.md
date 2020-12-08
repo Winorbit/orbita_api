@@ -9,13 +9,26 @@
 
   In Docker
 ```sh
-$ sudo docker-comppose up --build
+$ sudo docker-compose up --build
 ```
 In Python virtual env - 
 ```sh
-$ pipev shell
+$ pipenv shell  
+$ pipenv install   
 $ python manage.py runserver
+```  
+команда установит все зависим, необходимые для разработки, и те, которые вы указали в аргументе –dev  
+`$ pipenv install --dev`  
+
+### TEST
+
+```sh
+$ pipenv shell  
+$ pipenv sync   
+$ python manage.py test api.tests
 ```
+
+
 
 #### Configuration
 

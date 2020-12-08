@@ -1,10 +1,11 @@
 import os
 import psycopg2
 import logging.config
+
+from django.conf.global_settings import AUTHENTICATION_BACKENDS
 from pythonjsonlogger import jsonlogger
 import yaml
 from dotenv import load_dotenv
-
 
 def load_envfile(envfile: str = ".env"):
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
@@ -13,7 +14,6 @@ def load_envfile(envfile: str = ".env"):
         return os.environ
     else:
         raise Exception("Envfile doesn't exist")
-
 
 load_envfile()
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_swagger',
     'api',
     'rest_framework',
     'corsheaders',
@@ -79,9 +80,6 @@ CORS_ORIGIN_REGEX_WHITELIST = [
     'http://localhost:3000',
     'http://app_ui:1337',
 ]
-
-
-
 
 ROOT_URLCONF = 'urls'
 
@@ -144,6 +142,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'deploy_static')
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
