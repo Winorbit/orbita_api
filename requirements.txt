@@ -4,3 +4,5 @@ drf-yasg>=1.15
 gunicorn
 psycopg2>=2.7
 Pillow
+pycrypto
+freezegun

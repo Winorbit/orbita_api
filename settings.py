@@ -157,6 +157,9 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'winterorbita@gmail.com'
-EMAIL_HOST_PASSWORD = 'winterorbita2020'
+EMAIL_HOST_USER = os.environ.get("HOST_EMAIL")
+EMAIL_HOST_PASSWORD = os.environ.get("MAIL_APP_PASS")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+RESTORE_ACCESS_MESSAGE_TEMPLATE = "Мы получили запрос на изменение пароля для вашей учетной записи на сайте. Чтобы сменить пароль, пожалуйста, воспользуйтесь временной ссылкой: "

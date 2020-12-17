@@ -14,19 +14,21 @@ router.register(r'lessons', courses.LessonsList, basename='lessons')
 router.register(r'courses', courses.CoursesList)
 router.register(r'users', users.UserList, basename='users')
 router.register(r'users_profiles', users.UserProfileClass)
+#router.register(r'update_user_info', users.update_user_info)
 
 
-urlpatterns = [
-                  re_path(r'^', include(router.urls)),
-                  path('search_userprofile', users.search_userprofile),
-                  path('search_user_by_email', users.search_user_by_email),
-                  path('lessons_course/<course_id>/', courses.lessons_course),
+urlpatterns = [re_path(r'^', include(router.urls)),
+               path('search_userprofile', users.search_userprofile),
+               path('search_user_by_email', users.search_user_by_email),
+               path('request_restore_access', users.send_restore_access_email),
+               path('reset_user_password', users.reset_user_password),
+               path('lessons_course/<course_id>/', courses.lessons_course),
 
-                  re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+               re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-                  path('docs/', include_docs_urls(title='WinterOrbit')),
+               path('docs/', include_docs_urls(title='WinterOrbit')),
 
-                  path('schema/', get_schema_view(
+               path('schema/', get_schema_view(
                       title="WinterOrbit Service",
                       description="API for WinterOrbit"
                   ), name='openapi-schema'),

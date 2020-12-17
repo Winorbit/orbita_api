@@ -1,10 +1,10 @@
+from os import environ
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 
 from api.validation import check_email
 from api.models import Course, UserProfile
 from api.serializers import UserSerializer, UserProfileSerializer
-from settings import EMAIL_HOST_USER
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
@@ -13,9 +13,15 @@ from rest_framework.response import Response
 from api.models import UserProfile
 from api.serializers import UserSerializer, UserProfileSerializer
 from api.validation import check_email
-from settings import EMAIL_HOST_USER
-from settings import logger
+from settings import EMAIL_HOST_USER, logger, RESTORE_ACCESS_MESSAGE_TEMPLATE
 
+from Crypto.Cipher import XOR
+import base64
+from datetime import datetime
+
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+ 
 
 class UserList(viewsets.ModelViewSet):
 
@@ -98,7 +104,9 @@ def check_if_user_exist_by_field(field, value):
 
 @api_view(["PUT"])
 def update_user_info(request, user_id):
-    new_user_info = dict(request.data.dict())
+    new_user_info = dict(request.data)
+    # IN TEST NOT JSON IN REQUEST!!!
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!", new_user_info )
     if not new_user_info:
         logger.info(f"Empty request body for update user {user_id}")
         return Response({"message": "Empty request body"}, status=status.HTTP_404_NOT_FOUND)
@@ -127,8 +135,6 @@ def update_user_info(request, user_id):
         return Response(status=status.HTTP_202_ACCEPTED)
 
 def validate_email(email):
-    from django.core.validators import validate_email
-    from django.core.exceptions import ValidationError
     try:
         validate_email(email)
         return True
@@ -151,3 +157,98 @@ def send_email_for_orbita(request):
     else:
         logger.error(f"USER FEEDBACK HAVE NOT VALID DATA - 'email': {user_email}, 'message': {user_message}")
         return Response({"email": user_email, "message": user_message}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def encrypt(key, plaintext):
+  cipher = XOR.new(key)
+  return base64.b64encode(cipher.encrypt(plaintext))
+
+def decrypt(key, ciphertext):
+  cipher = XOR.new(key)
+  return cipher.decrypt(base64.b64decode(ciphertext)).decode("utf-8")
+
+
+def create_restore_access_url(root_url:str, email: str, datetime:str, cypher_key:str)->str:
+    hashed_datetime = encrypt(cypher_key,datetime).decode("utf-8")
+    hashed_email = encrypt(cypher_key,email).decode("utf-8")
+    restore_access_url = f"{root_url}/{hashed_email}||{hashed_datetime}"
+    return restore_access_url
+    pass
+
+
+@api_view(['POST'])
+def send_restore_access_email(request):
+    user_email = request.data.get('email')
+    if user_email:
+        try:
+            user = User.objects.get(email=user_email)
+        except Exception as e:
+            return Response({"message": f"Error with search user {e}"}, status=status.HTTP_404_NOT_FOUND)
+
+        root_url = f"{environ.get('UI_HOST')}/restore/"
+        date_time_now = datetime.now().strftime("%Y.%m.%d.%H")
+        cypher_key = environ.get("CYPHER_KEY")
+        restore_link = create_restore_access_url(root_url, user_email, date_time_now, cypher_key)
+
+        restore_access_message = f"{RESTORE_ACCESS_MESSAGE_TEMPLATE}\n{restore_link}"
+        try:
+            res = send_mail("Feedback", restore_access_message, EMAIL_HOST_USER, [user_email], fail_silently=False)
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": "Email was not correctly sended because of {e}"},status=status.HTTP_406_NOT_ACCEPTABLE)
+    else: 
+        return Response({"message": "Email in request not presnts"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # !! ADD CHECKING ON UNIQUE EMAIL ON REGISTRATION
+    # rooot-url, etc - and how test sending email?
+
+
+@api_view(['POST'])
+def reset_user_password(request):
+    hashed_string = request.data.get("hashed_user_info")
+    new_password = request.data.get("password")
+    if hashed_string and new_password:
+        # use raise conditions?
+
+        if "||" in hashed_string:
+            cypher_key = environ.get("CYPHER_KEY")
+            encoded_email = hashed_string.split("||")[0]
+            encoded_datetime = hashed_string.split("||")[1]
+        else: 
+            return Response({"message": f"hashed string  {hashed_string} is invalid "}, status=status.HTTP_400_BAD_REQUEST)
+
+        decoded_email = decrypt(cypher_key,encoded_email)
+        decoded_datetime = decrypt(cypher_key, encoded_datetime)
+        """
+        if not validate_email(decoded_email):
+            return Response({"message": f"email from hased string is invalid - {decoded_email}, please, check string and cypher key"}, status=status.HTTP_400_BAD_REQUEST)
+        """
+        
+        # в отдельную функцию ?
+        now = datetime.now()
+        decoded_datetime_to_list  = [int(x) for x in decoded_datetime.split(".")]
+        link_generation_time = datetime(*decoded_datetime_to_list)
+        duration = now - link_generation_time
+        duration_in_hours = divmod(duration.total_seconds(), 3600)[0]
+
+        if duration_in_hours > 24:
+        #if duration_in_hours < 24:
+            return Response({f"message": "Link expired, older then 24 hours - (duration in hours)"},status=status.HTTP_408_REQUEST_TIMEOUT)
+        else:
+            try:
+                user = User.objects.get(email=decoded_email)
+            except Exception as e:
+                return Response({"message": f"Error with search user {e}"}, status=status.HTTP_404_NOT_FOUND)
+        
+        if user.password == new_password:
+            return Response({"message": f"Sorry, this user already use this password"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user.password=new_password
+            user.save()
+            return Response({"message": f"Password for user was updated on {user.password}"},status=status.HTTP_200_OK)
+        """ 
+        LOGS
+        """
+        
+    else: 
+        return Response({"message": "Not hashed_user_info in request"},status=status.HTTP_404_NOT_FOUND)
