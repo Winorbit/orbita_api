@@ -65,10 +65,10 @@ class AccessRestoreTest(TestCase):
     def test_send_restore_access_email(self):
         user_email = "gibson@gmail.com" 
 
-        resp = self.client.post("/request_restore_access", {"email": user_email})
+        resp = self.client.post("/request_restore_access", {"email": user_email}, format='json')
         self.assertEqual(resp.status_code, 200)
         pass
-
+    
     def test_reset_password(self):
 
         # check if user with this email exist
@@ -82,16 +82,16 @@ class AccessRestoreTest(TestCase):
 
     def test_send_restore_access_email_fail_email(self):
         unexisted_user_email = "not_user@gmail.com" 
-        resp = self.client.post("/request_restore_access", {"email": unexisted_user_email})
+        resp = self.client.post("/request_restore_access", {"email": unexisted_user_email}, format='json')
         self.assertEqual(resp.status_code, 404)
         pass
 
     def test_send_restore_access_email_empty_request(self):
-        resp = self.client.post("/request_restore_access", {})
+        resp = self.client.post("/request_restore_access", {}, format='json')
         self.assertEqual(resp.status_code, 400)
         pass
 
-
+    
     @freeze_time("2020-12-12-18-15")
     def test_reset_user_password_unhappy_path(self):
         hashed_info_23_hours_ago = f"GRwsBxweFR4lOAYEEDMaUQIU||{self.hashed_test_datetime_23_hours_ago}"
@@ -102,25 +102,16 @@ class AccessRestoreTest(TestCase):
         current_user_password = "IDDQD"
         new_user_password = "NewSecret"
 
-        resp = self.client.post("/reset_user_password", {"hashed_user_info":""})
+        resp = self.client.post("/reset_user_password", {"hashed_user_info":""}, format='json')
         self.assertEqual(resp.status_code, 404)
-
-        resp = self.client.post("/reset_user_password", {"hashed_user_info": hashed_info_23_hours_ago, "password": new_user_password})
+    
+        resp = self.client.post("/reset_user_password", {"hashed_user_info": hashed_info_25_hours_ago, "password": new_user_password}, format='json')
         self.assertEqual(resp.status_code, 408)
-
+        """
+        resp = self.client.post("/reset_user_password", {"hashed_user_info": invalid_hashed_user_info, "password": current_user_password}, format='json')
+        self.assertEqual(resp.status_code, 400)
         
-        resp = self.client.post("/reset_user_password", {"hashed_user_info": hashed_info_23_hours_ago, "password": current_user_password})
-        self.assertEqual(resp.status_code, 400)
-
- 
-        resp = self.client.post("/reset_user_password", {"hashed_user_info": invalid_hashed_user_info, "password": current_user_password})
-        self.assertEqual(resp.status_code, 400)
-
-        resp = self.client.post("/reset_user_password", {"hashed_user_info": hashed_info_23_hours_ago, "password":new_pass})
+        resp = self.client.post("/reset_user_password", {"hashed_user_info": hashed_info_23_hours_ago, "password":new_pass}, format='json')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(User.objects.get(email="testuser@gmail.com").password, new_pass)
-
-
-        # if time expired
-        # if not data
-        # if not valid email - PRE-CHECK
+        """

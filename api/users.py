@@ -94,7 +94,6 @@ def search_user_by_email(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-# validate search by email
 
 def check_if_user_exist_by_field(field, value):
     if User.objects.filter(**{field:value}).exists():
@@ -105,8 +104,6 @@ def check_if_user_exist_by_field(field, value):
 @api_view(["PUT"])
 def update_user_info(request, user_id):
     new_user_info = dict(request.data)
-    # IN TEST NOT JSON IN REQUEST!!!
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!", new_user_info )
     if not new_user_info:
         logger.info(f"Empty request body for update user {user_id}")
         return Response({"message": "Empty request body"}, status=status.HTTP_404_NOT_FOUND)
@@ -125,8 +122,6 @@ def update_user_info(request, user_id):
             if check_if_user_exist_by_field(key, value): 
                 logger.info(f"User with {key}: {value} already exist")
                 return Response({"message": f"User with {key}: {value} already exist"}, status=status.HTTP_409_CONFLICT)
-            #как именно лучше возвращать на фронт эти данные? Как дикт с мессаджем?
-
         for (key, value) in new_user_info.items():
             setattr(user, key, value)
         user.save()
@@ -134,7 +129,7 @@ def update_user_info(request, user_id):
         logger.info(f"User {user} was updated with values {new_user_info}")
         return Response(status=status.HTTP_202_ACCEPTED)
 
-def validate_email(email):
+def validate_user_email(email):
     try:
         validate_email(email)
         return True
@@ -146,7 +141,7 @@ def validate_email(email):
 def send_email_for_orbita(request):
     user_message = request.data.get('message')
     user_email = request.data.get('email')
-    if user_message and not user_message.isspace() and validate_email(user_email):
+    if user_message and not user_message.isspace() and validate_user_email(user_email):
         body = f"\nFrom to: {user_email}\nMessage: {user_message}"
         try:
             send_mail('Feedback', body, EMAIL_HOST_USER, ['winorbita@gmail.com'], fail_silently=False)
@@ -183,6 +178,7 @@ def send_restore_access_email(request):
         try:
             user = User.objects.get(email=user_email)
         except Exception as e:
+
             return Response({"message": f"Error with search user {e}"}, status=status.HTTP_404_NOT_FOUND)
 
         root_url = f"{environ.get('UI_HOST')}/restore/"
@@ -192,15 +188,12 @@ def send_restore_access_email(request):
 
         restore_access_message = f"{RESTORE_ACCESS_MESSAGE_TEMPLATE}\n{restore_link}"
         try:
-            res = send_mail("Feedback", restore_access_message, EMAIL_HOST_USER, [user_email], fail_silently=False)
+            res = send_mail("Востановление доступа к профилю 'Зимней Орбиты'", restore_access_message, EMAIL_HOST_USER, [user_email], fail_silently=False)
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"message": "Email was not correctly sended because of {e}"},status=status.HTTP_406_NOT_ACCEPTABLE)
     else: 
         return Response({"message": "Email in request not presnts"}, status=status.HTTP_400_BAD_REQUEST)
-
-    # !! ADD CHECKING ON UNIQUE EMAIL ON REGISTRATION
-    # rooot-url, etc - and how test sending email?
 
 
 @api_view(['POST'])
@@ -208,9 +201,8 @@ def reset_user_password(request):
     hashed_string = request.data.get("hashed_user_info")
     new_password = request.data.get("password")
     if hashed_string and new_password:
-        # use raise conditions?
-
         if "||" in hashed_string:
+            logger.info(f"trying to decoded {hashed_string}")
             cypher_key = environ.get("CYPHER_KEY")
             encoded_email = hashed_string.split("||")[0]
             encoded_datetime = hashed_string.split("||")[1]
@@ -219,36 +211,39 @@ def reset_user_password(request):
 
         decoded_email = decrypt(cypher_key,encoded_email)
         decoded_datetime = decrypt(cypher_key, encoded_datetime)
-        """
-        if not validate_email(decoded_email):
-            return Response({"message": f"email from hased string is invalid - {decoded_email}, please, check string and cypher key"}, status=status.HTTP_400_BAD_REQUEST)
-        """
+
+        logger.info(f"Decoded data from request - {encoded_email}, {encoded_datetime}")
         
-        # в отдельную функцию ?
+        logger.info(f"Trying to validate decoded email - {decoded_email}")
+        if not validate_user_email(decoded_email):
+            return Response({"message": f"email from hased string is invalid - {decoded_email}, please, check string and cypher key"}, status=status.HTTP_400_BAD_REQUEST)
+        
         now = datetime.now()
         decoded_datetime_to_list  = [int(x) for x in decoded_datetime.split(".")]
         link_generation_time = datetime(*decoded_datetime_to_list)
         duration = now - link_generation_time
         duration_in_hours = divmod(duration.total_seconds(), 3600)[0]
+        logger.info(f"trying to check by datetime duration if link still available.  Now - {now}, time from link - {link_generation_time}")
 
         if duration_in_hours > 24:
-        #if duration_in_hours < 24:
             return Response({f"message": "Link expired, older then 24 hours - (duration in hours)"},status=status.HTTP_408_REQUEST_TIMEOUT)
         else:
             try:
+                logger.info(f"Trying to extract user by email {decoded_email}")
                 user = User.objects.get(email=decoded_email)
             except Exception as e:
+                logger.error(f"Can't find user by email {decoded_email}")
                 return Response({"message": f"Error with search user {e}"}, status=status.HTTP_404_NOT_FOUND)
-        
-        if user.password == new_password:
+        logger.info(f"Trying to change user password from {user.password} to {new_password}") 
+        if user.password == new_password: 
+            logger.error(f"Unseccessfull attempt to update password - new password equal with old - old:{user.password} new:{new_password}")
             return Response({"message": f"Sorry, this user already use this password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user.password=new_password
             user.save()
+            logger.info(f"Password for user was updated")
             return Response({"message": f"Password for user was updated on {user.password}"},status=status.HTTP_200_OK)
-        """ 
-        LOGS
-        """
         
     else: 
+        logger.info(f"Request does not conatain hashed_string or new password. Request body: {request.data}")
         return Response({"message": "Not hashed_user_info in request"},status=status.HTTP_404_NOT_FOUND)
