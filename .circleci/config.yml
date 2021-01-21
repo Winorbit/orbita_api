@@ -9,7 +9,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            git tag -a "Vvv12" -m "comment"
+            git tag -a "Vv12" -m "comment"
+            git remote set-url origin https://winorbit:00z@github.com/Winorbit/orbita_api.git
             git push --follow-tags
             # git log
             # git pull
@@ -17,7 +18,9 @@ jobs:
             #docker build -t winorbit/orbita-api:$last_tag .
             #docker login -u winorbit -p X2GD6FKDTGmKG4V
             #docker push winorbit/orbita-api:$last_tag
-
+            #git remote set-url origin https://winorbit:00z@github.com/Winorbit/orbita_api.git
+            #git config --global user.email "you@example.com"
+            #git config --global user.name "Your Name"
 
 # run tests
 # if ok - get current data
