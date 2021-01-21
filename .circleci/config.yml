@@ -9,6 +9,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
+            git config --global user.email "winorbita@gmail.com"
+            git config --global user.name "WinterOrbit"
             git tag -a "Vv12" -m "comment"
             git remote set-url origin https://winorbit:00z@github.com/Winorbit/orbita_api.git
             git push --follow-tags
