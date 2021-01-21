@@ -9,9 +9,19 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            git log
-            git pull
+            git tag -a "Vvv12" -m "comment"
+            git push --follow-tags
+            # git log
+            # git pull
             #last_tag=$(git describe --tags --abbrev=0)
             #docker build -t winorbit/orbita-api:$last_tag .
             #docker login -u winorbit -p X2GD6FKDTGmKG4V
             #docker push winorbit/orbita-api:$last_tag
+
+
+# run tests
+# if ok - get current data
+# add tag
+# push tag to github
+
+#2021.01.12--68
