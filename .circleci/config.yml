@@ -9,7 +9,9 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            last_tag=$(git describe --tags --abbrev=0)
-            docker build -t winorbit/orbita-api:$last_tag .
-            docker login -u winorbit -p X2GD6FKDTGmKG4V
-            docker push winorbit/orbita-api:$last_tag
+            git log
+            git pull
+            #last_tag=$(git describe --tags --abbrev=0)
+            #docker build -t winorbit/orbita-api:$last_tag .
+            #docker login -u winorbit -p X2GD6FKDTGmKG4V
+            #docker push winorbit/orbita-api:$last_tag
