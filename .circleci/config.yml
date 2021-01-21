@@ -11,7 +11,7 @@ jobs:
           command: |
             git config --global user.email "winorbita@gmail.com"
             git config --global user.name "WinterOrbit"
-            git tag -a "V.12" -m "comment"
+            git tag -a "V12" -m "comment"
             git remote set-url origin https://winorbit:00z++19ftor@github.com/Winorbit/orbita_api.git
             git push origin feature/add-circle-ci --follow-tags
             #last_tag=$(git describe --tags --abbrev=0)
