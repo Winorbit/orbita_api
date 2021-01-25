@@ -18,7 +18,7 @@ jobs:
             branch_name=$(git rev-parse --abbrev-ref HEAD)
             tag_name="$branch_name-V.$last_commit_number"
 
-            git tag -a tag_name -m "comment"
+            git tag -a $tag_name -m "comment"
 
             git push origin feature/add-circle-ci --follow-tags
             last_tag=$(git describe --tags --abbrev=0)
