@@ -5,9 +5,10 @@
   - Docker
   - docker-compose
   - OPTIONAL: for runing in Python virtual env - Python 3.7+ & pipenv
+
 # How to run
 
-  In Docker
+In Docker
 ```sh
 $ sudo docker-compose up --build
 ```
