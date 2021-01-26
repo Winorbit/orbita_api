@@ -47,12 +47,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
 ]
-# для отключения возможность просмотра API в продакшене
-# REST_FRAMEWORK = {
-#     'DEFAULT_RENDERER_CLASSES': (
-#         'rest_framework.renderers.JSONRenderer',
-#     )
-# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,19 +59,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://178.122.94.28:3000"
-#     "http://134.17.146.101:3000"
-# ]
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ORIGIN_ALLOW_ALL = False
+
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
-    'http://app_ui:1337',
-]
-CORS_ORIGIN_REGEX_WHITELIST = [
-    'http://localhost:3000',
+    'http://0.0.0.0:3000',
     'http://app_ui:1337',
 ]
 
