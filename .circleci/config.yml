@@ -13,12 +13,11 @@ jobs:
             git config --global user.name "WinterOrbit"
             git remote set-url origin https://winorbit:00z++19ftor@github.com/Winorbit/orbita_api.git
 
-
             last_commit_tail=$(git rev-parse --short HEAD)
 
             git tag -a $last_commit_tail -m "comment"
 
-            git push origin feature/add-circle-ci --follow-tags
+            git push origin $(git branch) --follow-tags
             last_tag=$(git describe --tags --abbrev=0)
             docker build -t winorbit/orbita-api:$last_commit_tail .
             docker login -u winorbit -p X2GD6FKDTGmKG4V
