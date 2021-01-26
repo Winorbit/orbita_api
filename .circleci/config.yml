@@ -15,7 +15,7 @@ jobs:
 
             last_commit_tail=$(git rev-parse --short HEAD)
 
-            current_branah_name = $(git rev-parse --abbrev-ref HEAD)
+            current_branch_name=$(git rev-parse --abbrev-ref HEAD)
             git tag -a $last_commit_tail -m "comment"
 
             git push origin current_branch_name --follow-tags
