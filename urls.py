@@ -35,6 +35,6 @@ urlpatterns = [re_path(r'^', include(router.urls)),
               path('schema/', get_schema_view(
                       title="WinterOrbit Service",
                       description="API for WinterOrbit"
-                  ), name='openapi-schema'),
- 
+                  ), name='openapi-schema'), 
             ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
