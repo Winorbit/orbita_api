@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
-from api.models import Course, Lesson, UserProfile
+from api.models import Course, Lesson, UserProfile, VideoLesson
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -13,6 +13,11 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ('cours', 'id', 'title', 'description', 'content')
+
+class VideoLessonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VideoLesson
+        fields = ('title', 'description', 'source_link')
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
