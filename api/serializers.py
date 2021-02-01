@@ -12,7 +12,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = '__all__'
+        fields = ('cours', 'id', 'title', 'description', 'content')
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -22,21 +22,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-   class Meta:
+    class Meta:
         model = User
         fields = ("email", "id", "username", "is_superuser", "password")
 
 
-# class ChangePasswordSerializer(serializers.Serializer):
-#     model = User
-#
-#     old_password = serializers.CharField(required=True)
-#     new_password = serializers.CharField(required=True)
-
-
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(min_length=2)
-
     redirect_url = serializers.CharField(max_length=500, required=False)
 
     class Meta:

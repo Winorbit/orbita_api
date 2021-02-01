@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            git config --global user.email "winorbita@gmail.com"
+            git config --global user.name "WinterOrbit"
+            git remote set-url origin https://winorbit:00z++19ftor@github.com/Winorbit/orbita_api.git
+
+            last_commit_tail=$(git rev-parse --short HEAD)
+
+            current_branch_name=$(git rev-parse --abbrev-ref HEAD)
+            git tag -a $last_commit_tail -m "comment"
+
+            git push origin $current_branch_name --follow-tags
+
+            last_tag=$(git describe --tags --abbrev=0)
+            docker build -t winorbit/orbita-api:$last_commit_tail .
+            docker login -u winorbit -p X2GD6FKDTGmKG4V
+            docker push winorbit/orbita-api:$last_commit_tail
+
+
+
+#tag_name="$branch_name-V.$last_commit_number"
+
+# brunch_name+commit_number
+# run tests
+# if ok - get current data
+# add tag
+# Как лучше ставить метку? Скрипт с усовиями - мерж в мастер - дата и релиз, инкремент, инкремент с десятичным к кветке
+# push tag to github
+
+#2021.01.12--68

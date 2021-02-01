@@ -4,3 +4,8 @@ drf-yasg>=1.15
 gunicorn
 psycopg2>=2.7
 Pillow
+psycopg2-binary
+python-json-logger
+python-dotenv
+django-cors-headers
+
