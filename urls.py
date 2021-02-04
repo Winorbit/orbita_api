@@ -17,15 +17,15 @@ router.register(r'users', users.UserList, basename='users')
 router.register(r'users_profiles', users.UserProfileClass)
 
 urlpatterns = [re_path(r'^', include(router.urls)),
-               #path('search_userprofile', users.search_userprofile),
-               #path('search_user_by_email', users.search_user_by_email),
-               #path('lessons_course/<course_id>/', courses.lessons_course),
+               path('search_userprofile', users.search_userprofile),
+               path('search_user_by_email', users.search_user_by_email),
+               path('lessons_course/<course_id>/', courses.lessons_course),
 
                re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
                path('docs/', include_docs_urls(title='WinterOrbit')),
 
-               #path('search_userprofile', users.search_userprofile),
+               path('search_userprofile', users.search_userprofile),
 
                path('search_user_by_email', users.search_user_by_email),
                path('update_user_info/<user_id>', users.update_user_info),
@@ -37,4 +37,3 @@ urlpatterns = [re_path(r'^', include(router.urls)),
                       description="API for WinterOrbit"
                   ), name='openapi-schema'), 
             ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
