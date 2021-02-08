@@ -20,6 +20,6 @@ jobs:
             git push origin $CURRENT_BRUNCH_NAME --follow-tags
 
             #DOCKERHUB
-            docker build -t DOCKERHUB_USER/orbita-api:$LAST_COMMIT_TAIL .
-            docker login -u DOCKERHUB_USER -p $DOCKERHUB_PASS
+            docker build -t $DOCKERHUB_USER/orbita-api:$LAST_COMMIT_TAIL .
+            docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             docker push winorbit/orbita-api:$LAST_COMMIT_TAIL
