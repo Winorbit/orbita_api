@@ -20,6 +20,8 @@ load_envfile()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
+HOST = os.environ.get("HOST")
+NGINX_PROXY_PORT = os.environ.get("NGINX_PROXY_PORT") 
 
 if os.environ.get("ENV_TYPE") != "prod":
     ALLOWED_HOSTS = ["*"]
@@ -63,10 +65,14 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = False
 
+PORT_UI = os.environ.get("PORT_UI")
+
 CORS_ORIGIN_WHITELIST = [
-    f'http://localhost:{os.environ.get("PORT_UI")}',
-    f'http://localhost:{os.environ.get("NGINX_PROXY_PORT")}',
-    f'http://0.0.0.0:{os.environ.get("PORT_UI")}',
+    f'http://localhost:{"PORT_UI"}',
+    f'http://localhost:{NGINX_PROXY_PORT}',
+    f'http://0.0.0.0:{"PORT_UI"}',
+    f'http://{HOST}:{NGINX_PROXY_PORT}',
+    f'http://{HOST}:{PORT_UI}',
 ]
 
 ROOT_URLCONF = 'urls'
@@ -88,27 +94,29 @@ TEMPLATES = [
 ]
 
 
-DATABASES = {
+LOCAL_DEV = os.environ.get("LOCAL_DEV")
+
+
+if LOCAL_DEV == "False":
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get("DB_NAME"),
         'USER': os.environ.get("DB_USER"),
         'PASSWORD': os.environ.get("DB_PASS"),
-        'HOST': os.environ.get("DB_HOST"),
+        'HOST': os.environ.get("HOST"),
         'PORT': os.environ.get("DB_PORT"),
     },
 }
 
-
-
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+if LOCAL_DEV == "True":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'mydatabase',
+        }
     }
-}
-"""
+
 WSGI_APPLICATION = 'wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
