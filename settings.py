@@ -64,9 +64,9 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://0.0.0.0:3000',
-    'http://app_ui:1337',
+    f'http://localhost:{os.environ.get("PORT_UI")}',
+    f'http://localhost:{os.environ.get("NGINX_PROXY_PORT")}',
+    f'http://0.0.0.0:{os.environ.get("PORT_UI")}',
 ]
 
 ROOT_URLCONF = 'urls'
@@ -87,6 +87,7 @@ TEMPLATES = [
     },
 ]
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -98,6 +99,16 @@ DATABASES = {
     },
 }
 
+
+
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
+    }
+}
+"""
 WSGI_APPLICATION = 'wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
