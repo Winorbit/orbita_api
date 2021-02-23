@@ -73,6 +73,8 @@ CORS_ORIGIN_WHITELIST = [
     f'http://0.0.0.0:{"PORT_UI"}',
     f'http://{HOST}:{NGINX_PROXY_PORT}',
     f'http://{HOST}:{PORT_UI}',
+    f'http://ui:{PORT_UI}',
+    # ui - name of the container
 ]
 
 ROOT_URLCONF = 'urls'
