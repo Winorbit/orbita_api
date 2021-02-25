@@ -68,9 +68,9 @@ CORS_ORIGIN_ALLOW_ALL = False
 PORT_UI = os.environ.get("PORT_UI")
 
 CORS_ORIGIN_WHITELIST = [
-    f'http://localhost:{"PORT_UI"}',
+    f'http://localhost:{PORT_UI}',
     f'http://localhost:{NGINX_PROXY_PORT}',
-    f'http://0.0.0.0:{"PORT_UI"}',
+    f'http://0.0.0.0:{PORT_UI}',
     f'http://{HOST}:{NGINX_PROXY_PORT}',
     f'http://{HOST}:{PORT_UI}',
     f'http://ui:{PORT_UI}',
