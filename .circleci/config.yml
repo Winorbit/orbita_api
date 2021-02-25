@@ -11,29 +11,15 @@ jobs:
           command: |
             git config --global user.email "winorbita@gmail.com"
             git config --global user.name "WinterOrbit"
-            git remote set-url origin https://winorbit:00z++19ftor@github.com/Winorbit/orbita_api.git
+            git remote set-url origin https://winorbit:$GITHUB_PASS@github.com/Winorbit/orbita_api.git
 
-            last_commit_tail=$(git rev-parse --short HEAD)
+            LAST_COMMIT_TAIL=$(git rev-parse --short HEAD)
+            CURRENT_BRUNCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
-            current_branch_name=$(git rev-parse --abbrev-ref HEAD)
-            git tag -a $last_commit_tail -m "comment"
+            git tag -a $LAST_COMMIT_TAIL -m "comment"
+            git push origin $CURRENT_BRUNCH_NAME --follow-tags
 
-            git push origin $current_branch_name --follow-tags
-
-            last_tag=$(git describe --tags --abbrev=0)
-            docker build -t winorbit/orbita-api:$last_commit_tail .
-            docker login -u winorbit -p X2GD6FKDTGmKG4V
-            docker push winorbit/orbita-api:$last_commit_tail
-
-
-
-#tag_name="$branch_name-V.$last_commit_number"
-
-# brunch_name+commit_number
-# run tests
-# if ok - get current data
-# add tag
-# Как лучше ставить метку? Скрипт с усовиями - мерж в мастер - дата и релиз, инкремент, инкремент с десятичным к кветке
-# push tag to github
-
-#2021.01.12--68
+            #DOCKERHUB
+            docker build -t $DOCKERHUB_USER/orbita-api:$LAST_COMMIT_TAIL .
+            docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+            docker push winorbit/orbita-api:$LAST_COMMIT_TAIL

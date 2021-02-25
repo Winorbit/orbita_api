@@ -11,32 +11,29 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'lessons', courses.LessonsList, basename='lessons')
+router.register(r'video_lessons', courses.VideoLessonsList, basename='video_lessons')
 router.register(r'courses', courses.CoursesList)
 router.register(r'users', users.UserList, basename='users')
 router.register(r'users_profiles', users.UserProfileClass)
 
+urlpatterns = [re_path(r'^', include(router.urls)),
+               path('search_userprofile', users.search_userprofile),
+               path('search_user_by_email', users.search_user_by_email),
+               path('lessons_course/<course_id>/', courses.lessons_course),
 
-urlpatterns = [
-                  re_path(r'^', include(router.urls)),
-                  path('search_userprofile', users.search_userprofile),
-                  path('search_user_by_email', users.search_user_by_email),
-                  path('lessons_course/<course_id>/', courses.lessons_course),
+               re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-                  re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+               path('docs/', include_docs_urls(title='WinterOrbit')),
 
-                  path('docs/', include_docs_urls(title='WinterOrbit')),
+               path('search_userprofile', users.search_userprofile),
 
-                  path('schema/', get_schema_view(
+               path('search_user_by_email', users.search_user_by_email),
+               path('update_user_info/<user_id>', users.update_user_info),
+               path('send_email', users.send_email_for_orbita),
+
+              re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+              path('schema/', get_schema_view(
                       title="WinterOrbit Service",
                       description="API for WinterOrbit"
-                  ), name='openapi-schema'),
-   re_path(r'^', include(router.urls)),
-   path('search_userprofile', users.search_userprofile),
-   path('search_user_by_email', users.search_user_by_email),
-   path('change_password', users.change_password),
-   path('update_user_info/<user_id>', users.update_user_info),
-   path('lessons_course/<course_id>/', courses.lessons_course),
-   path('send_email', users.send_email_for_orbita),
-
-   re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+                  ), name='openapi-schema'), 
+            ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
