@@ -1,31 +1,21 @@
-version: 2
+version: 2.1
+orbs:
+  python: circleci/python@1.0.0
 jobs:
   build:
     docker:
+      - image: circleci/python:3.8
       - image: circleci/buildpack-deps:stretch
+        environment:
+          DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
+      - image: circleci/postgres:9.6.2
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle_test
     steps:
       - checkout
-      - setup_remote_docker
+      - python/install-packages
       - run:
-          name: Build Docker image
+          name: Run django tests
           command: |
-            git config --global user.email "winorbita@gmail.com"
-            git config --global user.name "WinterOrbit"
-            git remote set-url origin https://winorbit:$GITHUB_PASS@github.com/Winorbit/orbita_api.git
-
-            LAST_COMMIT_TAIL=$(git rev-parse --short HEAD)
-            CURRENT_BRUNCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-
-            git tag -a $LAST_COMMIT_TAIL -m "comment"
-            git push origin $CURRENT_BRUNCH_NAME --follow-tags
-
-            #DOCKERHUB
-            docker build -t $DOCKERHUB_USER/orbita-api:$LAST_COMMIT_TAIL .
-            docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
-            docker push winorbit/orbita-api:$LAST_COMMIT_TAIL
-      - setup_unit_tests:
-      - run:
-          command: |
-            python3 -m pip install pipenv
-            pipenv shell
-            #pipenv sync
+            pipenv run python manage.py test
