@@ -1,18 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from api.models import Course, Lesson, UserProfile, VideoLesson
-
-
-class CourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = '__all__'
-
-
-class LessonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lesson
-        fields = ('cours', 'id', 'title', 'description', 'content')
+from api.models import  UserProfile, VideoLesson
 
 class VideoLessonSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,10 +18,3 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("email", "id", "username", "is_superuser", "password")
-
-class ResetPasswordEmailRequestSerializer(serializers.Serializer):
-    email = serializers.EmailField(min_length=2)
-    redirect_url = serializers.CharField(max_length=500, required=False)
-
-    class Meta:
-        fields = ['email']

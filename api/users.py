@@ -1,35 +1,16 @@
 from django.contrib.auth.models import User
 
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
-from rest_framework.permissions import IsAuthenticated
-
-from api.validation import check_email
-from api.models import Course, UserProfile
-from api.serializers import UserSerializer, UserProfileSerializer, ResetPasswordEmailRequestSerializer
-from django.core.mail import send_mail
-
-from api.validation import check_email
-from api.models import Course, UserProfile
-from api.serializers import UserSerializer, UserProfileSerializer
-from settings import EMAIL_HOST_USER
-
-from rest_framework import status, viewsets,generics
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.models import UserProfile
 from api.serializers import UserSerializer, UserProfileSerializer
+from api.models import UserProfile
 from api.validation import check_email
-from settings import EMAIL_HOST_USER
 from settings import logger
 
 
 class UserList(viewsets.ModelViewSet):
-
     queryset = User.objects.all().order_by('-id')
     serializer_class = UserSerializer
 
@@ -38,53 +19,70 @@ class UserList(viewsets.ModelViewSet):
             email = request.data.get("email")
             username = request.data.get("username")
             password = request.data.get("password") or request.data.get("password1")
-            logger.info(f"TRYING SERIALIZE NEW USER: {request.data}")
+            logger.info(f"Trying serialize new user: {request.data}")
+
+            if User.objects.filter(email=email): 
+                logger.info(f"User with email {email} already exist")
+                return Response(status=status.HTTP_409_CONFLICT)
+ 
+            if User.objects.filter(username=username):
+                logger.info(f"User with username {username} already exist")
+                return Response(status=status.HTTP_409_CONFLICT)
+ 
 
             serializer = UserSerializer(data={"username": username, "email": email, "password": password})
             if serializer.is_valid():
                 serializer.save()
-                logger.info(f"NEW USER CREATED: {serializer.data} ")
+                logger.info(f"New user created: {serializer.data} ")
                 new_user = User.objects.get(email=email, username=username)
                 if UserProfile.objects.create(user=new_user, id=new_user.id, user_courses=[]):
-                    logger.info(f"USER PROFILE WAS CREATED - {new_user.id}")
+                    logger.info(f"User profile were created - {new_user.id}")
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                logger.error(f"NEW USER WAS NOT CREATED {serializer.data} BECAUSE OF {serializer.errors}")
+                logger.error(f"New user were not created {serializer.data} because of {serializer.errors}")
                 return Response(serializer.errors, status=status.HTTP_412_PRECONDITION_FAILED)
         else:
-            logger.error(f"NEW USER WAS NOT CREATED - SOME EMPTY INPUT FIELDS: {request.data}")
+            logger.error(f"New user were not created - some empty fields: {request.data}")
             return Response(status=status.HTTP_412_PRECONDITION_FAILED)
 
 
 class UserProfileClass(viewsets.ModelViewSet):
-
     queryset = UserProfile.objects.all().order_by('-id')
     serializer_class = UserProfileSerializer
 
 
 @api_view(['POST'])
 def search_userprofile(request):
-
     req = request.data
     if req.get("password"):
         if req.get("username") or req.get("email"):
-            if check_email(req.get("username")):
-                req["email"] = req["username"]
-                del req["username"]
+            if req.get("email") and not req.get("username"):
+                user_email=req.get("email")
+                if not check_email(user_email):
+                    logger.error(f"Not valid user email: {user_email}")
+                    return Response(f"User email is incorrect: {req}", status=status.HTTP_404_NOT_FOUND)
+
+            """use email like username 
+            """
+            if req.get("username"):
+                if check_email(req.get("username")):
+                    req["email"]=req.get("username")
+                    del req["username"]
+  
             if User.objects.filter(**req).exists():
                 user = User.objects.get(**req)
                 user_profile = UserProfile.objects.get(user=user)
                 data = {**UserSerializer(user).data, **UserProfileSerializer(user_profile).data}
                 return Response(data, status=status.HTTP_200_OK)
             else:
-                logger.error(f"User {req} was not found")
+                logger.error(f"Not valid user data: {req}")
                 return Response(f"User {req} was not found", status=status.HTTP_404_NOT_FOUND)
+        else:
+            logger.error(f"Request with invalid body: {req}")
+            return Response(f"Request with empty body: {req}", status=status.HTTP_400_BAD_REQUEST)
     else:
         logger.error(f"Unauthorized, request without password: {req} ")
         return Response(f"Unauthorized, request without password, req: {req} ", status=status.HTTP_401_UNAUTHORIZED)
-
-    logger.error("Request with empty body")
-    return Response("Request with empty body", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -98,33 +96,6 @@ def search_user_by_email(request):
         return Response(data, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-class RequestPasswordResetEmail(generics.GenericAPIView):
-    serializer_class = ResetPasswordEmailRequestSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        email = request.data.get('email', '')
-
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-            token = PasswordResetTokenGenerator().make_token(user)
-            current_site = get_current_site(
-                request=request).domain
-            relativeLink = reverse(
-                'password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-
-            redirect_url = request.data.get('redirect_url', '')
-            absurl = 'http://'+current_site + relativeLink
-            email_body = 'Hello, \n Use link below to reset your password  \n' + \
-                absurl+"?redirect_url="+redirect_url
-            data = {'email_body': email_body, 'to_email': user.email,
-                    'email_subject': 'Reset your passsword'}
-            Util.send_email(data)
-        return Response({'success': 'We have sent you a link to reset your password'}, status=status.HTTP_200_OK)
 
 def check_if_user_exist_by_field(field, value):
     if User.objects.filter(**{field:value}).exists():
@@ -153,7 +124,6 @@ def update_user_info(request, user_id):
             if check_if_user_exist_by_field(key, value): 
                 logger.info(f"User with {key}: {value} already exist")
                 return Response({"message": f"User with {key}: {value} already exist"}, status=status.HTTP_409_CONFLICT)
-            #как именно лучше возвращать на фронт эти данные? Как дикт с мессаджем?
 
         for (key, value) in new_user_info.items():
             setattr(user, key, value)
@@ -161,29 +131,3 @@ def update_user_info(request, user_id):
 
         logger.info(f"User {user} was updated with values {new_user_info}")
         return Response(status=status.HTTP_202_ACCEPTED)
-
-def validate_email(email):
-    from django.core.validators import validate_email
-    from django.core.exceptions import ValidationError
-    try:
-        validate_email(email)
-        return True
-    except ValidationError:
-        return False
-
-
-@api_view(['POST'])
-def send_email_for_orbita(request):
-    user_message = request.data.get('message')
-    user_email = request.data.get('email')
-    if user_message and not user_message.isspace() and validate_email(user_email):
-        body = f"\nFrom to: {user_email}\nMessage: {user_message}"
-        try:
-            send_mail('Feedback', body, EMAIL_HOST_USER, ['winorbita@gmail.com'], fail_silently=False)
-        except Exception as e:
-            logger.error(f"USER MESSAGE WAS NOT SENT - {e}")
-            return Response({"ERROR": e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(status=status.HTTP_200_OK)
-    else:
-        logger.error(f"USER FEEDBACK HAVE NOT VALID DATA - 'email': {user_email}, 'message': {user_message}")
-        return Response({"email": user_email, "message": user_message}, status=status.HTTP_400_BAD_REQUEST)

@@ -23,3 +23,9 @@ jobs:
             docker build -t $DOCKERHUB_USER/orbita-api:$LAST_COMMIT_TAIL .
             docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             docker push winorbit/orbita-api:$LAST_COMMIT_TAIL
+      - setup_unit_tests:
+      - run:
+          command: |
+            python3 -m pip install pipenv
+            pipenv shell
+            #pipenv sync
