@@ -14,13 +14,12 @@ class UsersTest(TestCase):
         self.client = APIClient()
 
         test_user = User.objects.create(username= "User", password = 'TOPSECRET', email="user_num@gmail.com")
-        test_user_profile = users.UserProfile.objects.create(user=test_user, id=test_user.id, user_courses=[])
+        test_user_profile = users.UserProfile.objects.create(user=test_user, id=test_user.id)
 
         self.userprofile_resp = {'email': 'user_num@gmail.com',
                                  'password': 'TOPSECRET',
                                  'profile_image': None,
                                  'is_superuser': False,
-                                 'user_courses': [],
                                  'username': 'User'}
 
         """
