@@ -99,20 +99,7 @@ TEMPLATES = [
 LOCAL_DEV = os.environ.get("LOCAL_DEV")
 
 
-if LOCAL_DEV == "False":
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get("DB_NAME"),
-        'USER': os.environ.get("DB_USER"),
-        'PASSWORD': os.environ.get("DB_PASS"),
-        'HOST': os.environ.get("HOST"),
-        'PORT': os.environ.get("DB_PORT"),
-    },
-}
-
-if LOCAL_DEV == "True":
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': 'mydatabase',
