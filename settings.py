@@ -117,7 +117,7 @@ DEV_DB = {
 }
 
 if not TEST_MODE:
-    DATABASES = DEV_D:
+    DATABASES = DEV_DB
 else:
     DATABASE = TEST_DB
 
