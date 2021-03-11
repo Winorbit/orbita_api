@@ -35,7 +35,7 @@ class UserList(viewsets.ModelViewSet):
                 serializer.save()
                 logger.info(f"New user created: {serializer.data} ")
                 new_user = User.objects.get(email=email, username=username)
-                if UserProfile.objects.create(user=new_user, id=new_user.id, user_courses=[]):
+                if UserProfile.objects.create(user=new_user, id=new_user.id):
                     logger.info(f"User profile were created - {new_user.id}")
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
