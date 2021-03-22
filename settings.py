@@ -96,11 +96,16 @@ TEMPLATES = [
 ]
 
 
-LOCAL_DEV = os.environ.get("LOCAL_DEV")
+TEST_MODE = os.environ.get("TEST_MODE")
 
+TEST_DB = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'mydatabase',
+        }
+    }
 
-if LOCAL_DEV == "False":
-    DATABASES = {
+DEV_DB = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get("DB_NAME"),
@@ -111,13 +116,10 @@ if LOCAL_DEV == "False":
     },
 }
 
-if LOCAL_DEV == "True":
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase',
-        }
-    }
+if not TEST_MODE:
+    DATABASES = DEV_DB
+else:
+    DATABASES = TEST_DB
 
 WSGI_APPLICATION = 'wsgi.application'
 
