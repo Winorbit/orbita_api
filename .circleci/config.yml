@@ -15,3 +15,23 @@ jobs:
             pipenv run python manage.py makemigrations
             pipenv run python manage.py migrate
             pipenv run python manage.py test
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            git config --global user.email "winorbita@gmail.com"
+            git config --global user.name "WinterOrbit"
+            git remote set-url origin https://winorbit:$GITHUB_PASS@github.com/Winorbit/orbita_api.git
+            LAST_COMMIT_TAIL=$(git rev-parse --short HEAD)
+            CURRENT_BRUNCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+            git tag -a $LAST_COMMIT_TAIL -m "comment"
+            git push origin $CURRENT_BRUNCH_NAME --follow-tags
+            #DOCKERHUB
+
+
+# git rev-list --count HEAD ^<branch-name>  - count of commits in branch
+# get branch name
+# get commit number
+# 1+2 - add tag
+# use this tag to checkout and run
