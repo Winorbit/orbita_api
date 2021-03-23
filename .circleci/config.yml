@@ -28,7 +28,6 @@ jobs:
             BRANCH_COMMIT_COUNT=$(git rev-list --count HEAD ^$CURRENT_BRANCH_NAME)
             git tag -a "${CURRENT_BRANCH_NAME}.${BRANCH_COMMIT_COUNT}" -m "comment"
             git push -u origin $CURRENT_BRANCH_NAME --follow-tags
-            #DOCKERHUB
 
 
 # git rev-list --count HEAD ^<branch-name>  - count of commits in branch
