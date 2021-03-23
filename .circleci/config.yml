@@ -33,5 +33,3 @@ jobs:
 # git rev-list --count HEAD ^<branch-name>  - count of commits in branch
 # get branch name
 # get commit number
-# 1+2 - add tag
-# use this tag to checkout and run
