@@ -26,7 +26,7 @@ jobs:
             LAST_COMMIT_TAIL=$(git rev-parse --short HEAD)
             CURRENT_BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
             BRANCH_COMMIT_COUNT=$(git rev-list --count HEAD ^$CURRENT_BRANCH_NAME)
-            git tag -a $LAST_COMMIT_TAIL -m "comment"
+            git tag -a "${LAST_COMMIT_TAIL}.BB" -m "comment"
             git push -u origin $CURRENT_BRANCH_NAME --follow-tags
             #DOCKERHUB
 
