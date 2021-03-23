@@ -29,7 +29,3 @@ jobs:
             DATETIME_NOW=$(date +"%Y-%m-%d-%H-%M")
             git tag -a "${CURRENT_BRANCH_NAME}.${DATETIME_NOW}" -m "comment"
             git push -u origin $CURRENT_BRANCH_NAME --follow-tags
-
-# git rev-list --count HEAD ^<branch-name>  - count of commits in branch
-# get branch name
-# get commit number
