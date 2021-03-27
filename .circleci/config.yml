@@ -14,6 +14,7 @@ jobs:
           command: |
             pipenv run python manage.py makemigrations
             pipenv run python manage.py migrate
+            pipenv run python manage.py migrate --run-syncdb
             pipenv run python manage.py test
       - checkout
       - setup_remote_docker
