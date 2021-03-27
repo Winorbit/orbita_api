@@ -96,14 +96,6 @@ TEMPLATES = [
 ]
 
 
-TEST_MODE = os.environ.get("TEST_MODE")
-
-TEST_DB = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase',
-        }
-    }
 
 DEV_DB = {
     'default': {
@@ -116,10 +108,14 @@ DEV_DB = {
     },
 }
 
+"""
+PRO-DB!!!!
 if not TEST_MODE:
     DATABASES = DEV_DB
 else:
     DATABASES = TEST_DB
+"""
+
 
 WSGI_APPLICATION = 'wsgi.application'
 
