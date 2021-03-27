@@ -97,7 +97,7 @@ TEMPLATES = [
 
 
 
-DEV_DB = {
+DATABASE = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get("DB_NAME"),
@@ -107,6 +107,8 @@ DEV_DB = {
         'PORT': os.environ.get("DB_PORT"),
     },
 }
+
+
 
 """
 PRO-DB!!!!
