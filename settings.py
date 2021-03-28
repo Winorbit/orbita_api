@@ -114,6 +114,7 @@ DATABASES = {
 
 
 """
+see the fire in your eyes
 PRO-DB!!!!
 if not TEST_MODE:
     DATABASES = DEV_DB
