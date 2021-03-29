@@ -18,12 +18,16 @@ $ pipenv shell
 $ pipenv install   
 $ python manage.py runserver
 ```  
-команда установит все зависим, необходимые для разработки, и те, которые вы указали в аргументе –dev  
+команда установит все зависимости, необходимые для разработки, и те, которые вы указали в аргументе –dev  
 `$ pipenv install --dev`  
 
 ### TEST
 
-```sh
+``` 
+$ make test
+
+OR
+
 $ pipenv shell  
 $ pipenv sync   
 $ python manage.py test api.tests
