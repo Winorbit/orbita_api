@@ -96,16 +96,8 @@ TEMPLATES = [
 ]
 
 
-TEST_MODE = os.environ.get("TEST_MODE")
 
-TEST_DB = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase',
-        }
-    }
-
-DEV_DB = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get("DB_NAME"),
@@ -113,13 +105,12 @@ DEV_DB = {
         'PASSWORD': os.environ.get("DB_PASS"),
         'HOST': os.environ.get("HOST"),
         'PORT': os.environ.get("DB_PORT"),
+        'TEST': {
+            'NAME': 'postgres_for_tests',
+        },
     },
 }
 
-if not TEST_MODE:
-    DATABASES = DEV_DB
-else:
-    DATABASES = TEST_DB
 
 WSGI_APPLICATION = 'wsgi.application'
 
