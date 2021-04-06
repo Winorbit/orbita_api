@@ -44,9 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework_swagger',
+    'drf_yasg',
     'api',
     'rest_framework',
+    'tinymce',
     'corsheaders',
 ]
 
@@ -153,7 +154,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
