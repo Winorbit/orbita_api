@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 from tinymce import models as tinymce_models
 
 class Lesson(models.Model):
@@ -47,7 +48,7 @@ class VideoLesson(models.Model):
 class UserProfile(models.Model):
     profile_image = models.ImageField(upload_to="user_pics", blank=True, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    groups = models.ArrayField(models.IntegerField(max_length=15), null=True, blank=True)
+    groups = ArrayField(models.CharField(max_length=10, blank=True), null=True, blank=True)
 
     def __str__(self):
         return self.user.username
