@@ -48,7 +48,7 @@ class VideoLesson(models.Model):
 class UserProfile(models.Model):
     profile_image = models.ImageField(upload_to="user_pics", blank=True, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    groups = ArrayField(models.CharField(max_length=10, blank=True), null=True, blank=True)
+    groups = ArrayField(models.CharField(max_length=10, blank=True), blank=True, default=list)
 
     def __str__(self):
         return self.user.username

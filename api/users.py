@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.serializers import UserSerializer, UserProfileSerializer
-from api.models import UserProfile
+from api.models import UserProfile, Group
 from api.validation import check_email
 from settings import logger
 
@@ -131,3 +131,32 @@ def update_user_info(request, user_id):
 
         logger.info(f"User {user} was updated with values {new_user_info}")
         return Response(status=status.HTTP_202_ACCEPTED)
+
+@api_view(["PUT"])
+def add_user_to_group(request):
+    data = request.data
+    if not data:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    user_id  = data.get("user_id")
+    group_id  = data.get("group_id")
+
+    if user_id and group_id:
+        try:
+            user_profile = UserProfile.objects.get(user__id=user_id)
+            Group.objects.get(id=group_id)
+        except Exception as e:
+            logger.info(f"Failed with exception: {e}")
+            return Response({"message": f"Failed with exception: {e}"}, status=status.HTTP_404_NOT_FOUND)
+
+        if group_id in user_profile.groups:
+            logger.info(f"User {user_profile} already member of group {group_id}")
+            return Response({"message": f"User is already in this group"}, status=status.HTTP_409_CONFLICT)
+        else:
+            user_profile.groups.append(group_id)
+            user_profile.save()
+            logger.info(f"Group {group_id} was added user {user_profile}")
+            return Response(status=status.HTTP_200_OK)
+    else:
+        logger.info(f"User with id {user_id} was not found")
+        return Response({"message": f"User with id {user_id} was not found"}, status=status.HTTP_404_NOT_FOUND)

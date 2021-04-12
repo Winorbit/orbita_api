@@ -41,7 +41,7 @@ urlpatterns = [re_path(r'^', include(router.urls)),
                re_path(r'^admin/', admin.site.urls),
                path('tinymce/', include('tinymce.urls')),
                path('search_user_by_email', users.search_user_by_email),
-               #path('add_user_to_group', users.add_user_to_group),
+               path('add_user_to_group', users.add_user_to_group),
                path('search_userprofile', users.search_userprofile),
                path('update_user_info/<user_id>', users.update_user_info),
 

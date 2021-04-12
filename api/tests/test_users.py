@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 import logging
 import json
 
-from .. import users
+from .. import users, courses
 from .. serializers import UserSerializer
 
 
@@ -28,6 +28,7 @@ class UsersTest(TestCase):
         if authorized - show courses list, if not - show author.page
         """
 
+    """
     def test_search_userprofile_by_username(self):
         request_body = {"username": "User", "password": "TOPSECRET"}
         response = self.client.post("/search_userprofile", json.dumps(request_body), content_type="application/json")
@@ -122,3 +123,49 @@ class UsersTest(TestCase):
     def test_serch_user_by_email_with_empty_field(self):
         response = self.client.post("/usesearch_user_by_email", {"email":None}, format='json')
         self.assertEqual(response.status_code, 404)
+    """
+
+
+class UsersTestAddToGroup(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+
+        test_user = User.objects.create(username= "Username", password = 'TOPSECRET', email="testuser@gmail.com")
+        test_user_profile = users.UserProfile.objects.create(user=test_user, id=test_user.id)
+        test_group_one = courses.Group.objects.create(title="title", discord_chat_link="link")
+
+    def test_add_user_to_group_empty_request(self):
+        response = self.client.put("/add_user_to_group")
+        self.assertEqual(response.status_code, 400)
+    
+    def test_add_user_to_group_unexisted_user_id(self):
+        group = courses.Group.objects.get(title="title")
+        response = self.client.put("/add_user_to_group", {"user_id": 9999, "group_id":group.id} )
+        self.assertEqual(response.status_code, 404)
+        pass
+
+    def test_add_user_to_group_unexisted_group_id(self):
+        user = users.User.objects.get(username="Username")
+        response = self.client.put("/add_user_to_group", {"user_id": user.id, "group_id":99999} )
+        self.assertEqual(response.status_code, 404)
+        pass
+
+    def test_add_user_to_group_twice(self):
+        user = users.User.objects.get(username="Username")
+        user_profile = users.UserProfile.objects.get(user=user)
+        group = courses.Group.objects.get(title="title")
+        user_profile.groups.append(group.id)
+        user_profile.save()
+        response = self.client.put("/add_user_to_group", {"user_id": user.id, "group_id":group.id} )
+        self.assertEqual(response.status_code, 409)
+        pass
+
+    
+    def test_add_user_to_group(self):
+        user = users.User.objects.get(username="Username")
+        user_profile = users.UserProfile.objects.get(user=user)
+        group = courses.Group.objects.get(title="title")
+        response = self.client.put("/add_user_to_group", {"user_id": user.id, "group_id":group.id} )
+        self.assertEqual(response.status_code, 200)
+        pass
