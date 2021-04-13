@@ -8,6 +8,8 @@ class Lesson(models.Model):
     source_link = models.CharField(max_length=2500, default='', blank=False)
     lesson_description = tinymce_models.HTMLField()
     lesson_usefull_links = tinymce_models.HTMLField()
+    lesson_homework = tinymce_models.HTMLField()
+    lesson_conspect = tinymce_models.HTMLField()
 
     class Meta:
         managed = True
