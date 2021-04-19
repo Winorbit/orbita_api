@@ -34,6 +34,16 @@ $ python manage.py test api.tests
 ```
 
 
+### APPLY FIXTURE
+In case of empty database you can apply fixtures to add some test data
+
+``` 
+$ python manage.py apply_fixtures <env>
+example:
+$ python manage.py apply_fixtures dev
+
+```
+
 
 #### Configuration
 
