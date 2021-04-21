@@ -27,10 +27,10 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register(r'video_lessons', courses.VideoLessonsList, basename='video_lessons')
 router.register(r'users', users.UserList, basename='users')
 router.register(r'lessons', courses.LessonsList, basename='lessons')
 router.register(r'groups', courses.GroupsList, basename='groups')
+router.register(r'articles', courses.ArticlesList, basename='articles')
 router.register(r'users_profiles', users.UserProfileClass)
 
 urlpatterns = [re_path(r'^', include(router.urls)),
