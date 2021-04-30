@@ -40,7 +40,6 @@ def load_fixtures(env:int=8003):
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
     cmd_args = sys.argv
-    print(cmd_args)
 
     if cmd_args[1] == "apply_fixtures":
         try:
