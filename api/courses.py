@@ -1,11 +1,7 @@
-from api.models import VideoLesson, Lesson, Group
-from api.serializers import VideoLessonSerializer, LessonSerializer, GroupSerializer
+from api.models import Article, Lesson, Group
+from api.serializers import LessonSerializer, GroupSerializer, ArticleSerializer
 
 from rest_framework import viewsets
-
-class VideoLessonsList(viewsets.ModelViewSet):
-    queryset = VideoLesson.objects.all().order_by('-id')
-    serializer_class = VideoLessonSerializer
 
 class LessonsList(viewsets.ModelViewSet):
     queryset = Lesson.objects.all().order_by('-id')
@@ -14,3 +10,7 @@ class LessonsList(viewsets.ModelViewSet):
 class GroupsList(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by('-id')
     serializer_class = GroupSerializer 
+
+class ArticlesList(viewsets.ModelViewSet):
+    queryset = Article.objects.all().order_by('-id')
+    serializer_class = ArticleSerializer 
