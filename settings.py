@@ -75,7 +75,8 @@ CORS_ORIGIN_WHITELIST = [
     f'http://{HOST}:{NGINX_PROXY_PORT}',
     f'http://{HOST}:{PORT_UI}',
     f'http://ui:{PORT_UI}',
-    f'http://winorbita.com ',
+    'http://winorbita.com ',
+    'winorbita.com',
     # ui - name of the container
 ]
 
