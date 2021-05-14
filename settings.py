@@ -26,7 +26,7 @@ NGINX_PROXY_PORT = os.environ.get("NGINX_PROXY_PORT")
 if os.environ.get("ENV_TYPE") != "prod":
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ['31.131.28.206', 'web-api']
+    ALLOWED_HOSTS = ['31.131.28.206', 'web-api', "web-ui", "winorbita.com"]
 
 DEBUG = os.environ.get("DEBUG")
 
