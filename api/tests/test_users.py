@@ -8,6 +8,39 @@ from .. import users, courses
 from .. serializers import UserSerializer
 
 
+
+class ClassName:
+    def some_method(self, arg):
+        print(arg)
+
+
+  
+ClassName().some_method("Hello!")
+
+
+def update_user_name(user_info, new_username):
+    if user_info.get("name"):
+        user_info["name"] = new_username
+        return user_info
+
+user = {"name":"Guslia", "age":33}
+update_user_info = update_user_name(user)
+
+
+def decode(str):
+    return decoser.decose(str)
+
+def decode():
+    print("Hello!")
+
+def update_user_name(old_username, new_username):
+    user = get_from_databsase.get("name"):
+        user["name"] = new_username
+
+user
+
+
+
 class UsersTest(TestCase):
 
     def setUp(self):
