@@ -8,15 +8,15 @@ import yaml
 from dotenv import load_dotenv
 
 def load_envfile(envfile: str = ".env"):
-    dotenv_path_default = os.path.join(os.path.dirname(__file__), ".env")
-    dotenv_path_extend = os.path.join(os.path.dirname(__file__), ".envfile")
+    dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+    dotenv_path_alter = os.path.join(os.path.dirname(__file__), ".envfile")
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
 
         return os.environ
     else:
-        if os.path.exists(dotenv_path_extend):
-            load_dotenv(dotenv_path_extend)
+        if os.path.exists(dotenv_path_alter):
+            load_dotenv(dotenv_path_alter)
             return os.environ
         else:
             raise Exception("Envfile doesn't exist")
