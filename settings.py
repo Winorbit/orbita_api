@@ -82,7 +82,6 @@ CORS_ORIGIN_WHITELIST = [
     f'http://{HOST}:{PORT_UI}',
     f'http://ui:{PORT_UI}',
     'http://winorbita.com ',
-    'winorbita.com',
     # ui - name of the container
 ]
 
