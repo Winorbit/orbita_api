@@ -19,6 +19,17 @@ class UserList(viewsets.ModelViewSet):
             email = request.data.get("email")
             username = request.data.get("username")
             password = request.data.get("password") or request.data.get("password1")
+
+            if not request.data.get("is_staff"):
+                is_staff = False
+            else:
+                is_staff = True
+
+            if not request.data.get("is_superuser"):
+                is_superuser = False
+            else:
+                is_superuser = True
+
             logger.info(f"Trying serialize new user: {request.data}")
 
             if User.objects.filter(email=email): 
@@ -28,13 +39,20 @@ class UserList(viewsets.ModelViewSet):
             if User.objects.filter(username=username):
                 logger.info(f"User with username {username} already exist")
                 return Response(status=status.HTTP_409_CONFLICT)
- 
+            
+            new_user_info = {"username": username, 
+                             "email": email, 
+                             "password": password, 
+                             "is_superuser": is_superuser, 
+                             "is_staff": is_staff}
 
-            serializer = UserSerializer(data={"username": username, "email": email, "password": password})
+            serializer = UserSerializer(data=new_user_info)
             if serializer.is_valid():
                 serializer.save()
                 logger.info(f"New user created: {serializer.data} ")
                 new_user = User.objects.get(email=email, username=username)
+                new_user.set_password(password)
+                new_user.save()
                 if UserProfile.objects.create(user=new_user, id=new_user.id):
                     logger.info(f"User profile were created - {new_user.id}")
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
