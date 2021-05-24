@@ -82,13 +82,19 @@ def search_userprofile(request):
 
             """use email like username 
             """
+            password = req["password"]
             if req.get("username"):
                 if check_email(req.get("username")):
                     req["email"]=req.get("username")
                     del req["username"]
-  
+
+            # unhashed password broke pipelin
+            del req["password"]
+            
             if User.objects.filter(**req).exists():
                 user = User.objects.get(**req)
+                if not user.check_password(password):
+                    return Response(f"Unauthorized, request without password, req: {req} ", status=status.HTTP_401_UNAUTHORIZED)
                 user_profile = UserProfile.objects.get(user=user)
                 data = {**UserSerializer(user).data, **UserProfileSerializer(user_profile).data}
                 return Response(data, status=status.HTTP_200_OK)
