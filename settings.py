@@ -9,11 +9,17 @@ from dotenv import load_dotenv
 
 def load_envfile(envfile: str = ".env"):
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+    dotenv_path_alter = os.path.join(os.path.dirname(__file__), ".envfile")
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
+
         return os.environ
     else:
-        raise Exception("Envfile doesn't exist")
+        if os.path.exists(dotenv_path_alter):
+            load_dotenv(dotenv_path_alter)
+            return os.environ
+        else:
+            raise Exception("Envfile doesn't exist")
 
 load_envfile()
 
@@ -76,7 +82,6 @@ CORS_ORIGIN_WHITELIST = [
     f'http://{HOST}:{PORT_UI}',
     f'http://ui:{PORT_UI}',
     'http://winorbita.com ',
-    'winorbita.com',
     # ui - name of the container
 ]
 
