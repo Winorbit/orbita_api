@@ -11,7 +11,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("email", "id", "username", "is_superuser", "password")
+        fields = ("email", "id", "username", "is_superuser", "password", "is_staff")
 
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
