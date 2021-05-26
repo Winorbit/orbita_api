@@ -20,6 +20,7 @@ django-cors-headers = "*"
 django-rest-swagger = "*"
 coreapi = "*"
 django-tinymce = "*"
+django-sslify = "*"
 
 [requires]
 python_version = "3.7"
