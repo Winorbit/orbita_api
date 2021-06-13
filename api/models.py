@@ -49,7 +49,7 @@ class Lesson(models.Model):
     lesson_homework = tinymce_models.HTMLField(blank=True)
     lesson_conspect = tinymce_models.HTMLField(blank=True)
     lesson_number = models.IntegerField(default=1,unique=False,null=True)
-    lesson_group = models.OneToOneField(Group, on_delete=models.CASCADE, blank=True, unique=False,null=True)
+    lesson_group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, unique=False,null=True)
     
 
     class Meta:
